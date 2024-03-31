@@ -1,0 +1,18 @@
+{% extends 'base.html' %}
+
+
+{% block title %} Index {% endblock %}
+
+{% block content %}
+
+<h1 class="display-1 text-center">Please make a selection:</h1>
+
+{% if 'user_id' in session %}
+    <li><a href="/logout">Logout</a></li>
+    <li><a href="/users/{{ username }}">Secret</a></li>
+{% endif %}
+
+<a href="/login" class="btn btn-success btn-lg">Login</a>
+<a href="/register" class="btn btn-success btn-lg">Create Account</a>
+
+{% endblock %}
