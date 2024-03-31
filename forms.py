@@ -1,6 +1,6 @@
 
 from flask_wtf import FlaskForm
-from wtforms import StringField, FloatField, SelectField, BooleanField
+from wtforms import StringField, PasswordField
 from wtforms.validators import InputRequired, Optional, URL, NumberRange
 
 class AddUserForm(FlaskForm):
@@ -8,7 +8,7 @@ class AddUserForm(FlaskForm):
 
     username = StringField("", 
                 validators=[InputRequired(message="Enter a valid username")])
-    password = StringField("", 
+    password = PasswordField("", 
                 validators=[InputRequired(message="Enter a valid password")])
     email = StringField("", 
                 validators=[InputRequired(message="Enter a valid email")])
@@ -22,7 +22,7 @@ class LoginForm(FlaskForm):
 
     username = StringField("", 
                 validators=[InputRequired(message="Enter a valid username")])
-    password = StringField("", 
+    password = PasswordField("", 
                 validators=[InputRequired(message="Enter a valid password")])
     
 class FeedbackForm(FlaskForm):

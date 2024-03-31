@@ -1,22 +1,28 @@
 """Flask app for Authenticating and Authorizing"""
 
-from flask import Flask, render_template, redirect, session, flash, request, jsonify
+from flask import Flask, render_template, redirect, session, flash
+from flask_debugtoolbar import DebugToolbarExtension
 from models import db, connect_db, User, Feedback
 from forms import AddUserForm, LoginForm, FeedbackForm
 
 app = Flask(__name__)
 
-app.config['SQLALCHEMY_DATABASE_URI'] = 'postgresql:///cupcakes'
-app.config['SECRET_KEY'] = "oh-so-secret"
+app.config['SQLALCHEMY_DATABASE_URI'] = 'postgresql:///auth_auth'
+app.config['SECRET_KEY'] = "my_big_secret"
 app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
+app.config['DEBUG_TB_INTERCEPT_REDIRECTS'] = True
 
 connect_db(app)
+
+toolbar = DebugToolbarExtension(app)
+
 
 
 @app.route('/')
 def home():
     return render_template("/index.html", session=session)
 
+###################################### User Routes ###############################################
 
 @app.route("/register", methods=["GET", "POST"])
 def register():
@@ -36,13 +42,14 @@ def register():
         db.session.commit()
 
         return redirect("/users/<username>")
-    else:
+    
+    else: #If form is not valid, error messages flash, but user input remains on the page.
         return render_template("register.html", form=form)
 
 
 @app.route("/login", methods=["GET", "POST"])
 def login():
-    """Authenticate user and login"""
+    """Authenticate and login"""
 
     form = LoginForm()
 
@@ -84,17 +91,17 @@ def logout():
 
     return redirect("/")
 
-################  Feedback ##################
+##################################  Feedback Routes ####################################
 
-@app.route("/feedback/<entry.id>/update", methods=["GET", "PATCH"])
-def update_feedback(entry_id):
+@app.route("/feedback/<feedback_id>/update", methods=["GET", "PATCH"])
+def update_feedback(feedback_id):
     """Updates a feedback entry"""
 
     if "user_id" not in session:
         flash("Please login to view")
         return redirect("/")
     
-    entry = Feedback.query.get_or_404(entry_id)
+    entry = Feedback.query.get_or_404(feedback_id)
     form = FeedbackForm(obj=entry)
 
     if form.validate_on_submit():
@@ -132,7 +139,7 @@ def add_feedback():
     else: 
         return render_template("feedback.html")
     
-@app.route("/feedback/<feedback-id>/delete", methods=["DELETE"])
+@app.route("/feedback/<feedback_id>/delete", methods=["DELETE"])
 def delete_feedback(id):
     """Deletes a specific feedback post"""
 
